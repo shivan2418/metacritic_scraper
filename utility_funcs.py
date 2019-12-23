@@ -57,19 +57,36 @@ def save_file(file_name,movie_title,page):
         file.write(page.text)
 
 
-def get_request(url,params=None,forced_wait=1):
+def get_request(url,params=None,forced_wait=1,max_retry=5):
     '''Returns the page if successful'''
     completed = False
 
+    # a counter to keep track of retry
+    counter = (i for i in range(1000))
 
     while not completed:
+
         time.sleep(random.uniform(forced_wait,forced_wait*2))
         try:
             page = requests.get(url, headers=header)
             completed = True
         except ConnectionError:
             time.sleep(10)
-            print(f'Connection error, sleeping for 10 {ConnectionError.errno}')
+            print(f'Connection error, sleeping for 10 {ConnectionError}')
+        except requests.exceptions.HTTPError as http_err:
+            print(f'HTML error {http_err}')
+            return http_err
+        except requests.exceptions.Timeout as timeout_err:
+            c = next(counter)
+            if c < max_retry:
+                print(f'Connection timeout, retrying {c}')
+                time.sleep(10)
+            elif c > max_retry:
+                print(f'Conenction keeps timing out, giving up {timeout_err}')
+                logging.error(f'{url},{timeout_err}')
+                return timeout_err
+
+        # all other stuff
         except Exception as e:
             logging.error(e)
             print(f'{url}:  {e}')
