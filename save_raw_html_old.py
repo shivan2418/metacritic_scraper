@@ -50,8 +50,6 @@ def make_tasks(task_queue,movie_dict):
                             print('Rate limited! Waiting 30 secs')
                             time.sleep(30)
 
-
-
                     except ConnectionError:
                         time.sleep(10)
                         print('Connection error, sleeping for 5')

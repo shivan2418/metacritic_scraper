@@ -29,14 +29,10 @@ def make_file_name(movie_title,page_num='0',main_page=False,append_date=True):
 
     template_string.append(movie_title.replace('/',''))
     template_string.append(page_num)
-
+    template_string = [str(item) for item in template_string]
     file_name = sep.join(template_string)
 
     return file_name
-
-
-    f'{today_date}_{main_page_file}_{movie_title}'
-
 
 def make_dir_if_not_exist(path):
     try:
@@ -52,7 +48,7 @@ def save_file(file_name,movie_title,page):
     make_dir_if_not_exist(save_folder_path)
     save_path = f'{os.path.join(save_folder_path, file_name.replace("/",""))}.html'
     # Once on that url, save it.
-    print(f'Saving: {save_path}')
+    print(f'Saving: {movie_title}')
     with open(save_path, 'w+') as file:
         file.write(page.text)
 
